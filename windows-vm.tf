@@ -1,12 +1,13 @@
 
 # Azure Windows Virtual Machine
 resource "azurerm_windows_virtual_machine" "secure_vm" {
-  name                = "demotaskvm"
-  resource_group_name = azurerm_resource_group.demo-task-rg.name
-  location            = azurerm_resource_group.demo-task-rg.location
+  name                = "securevm"
+  resource_group_name = azurerm_resource_group.secure_rg.name
+  location            = azurerm_resource_group.secure_rg.location
   size                = "Standard_F2"
   admin_username      = "adminuser"
-  admin_password      = "Password1234!"
+  admin_password      = azurerm_key_vault_secret.secure_windows_vm_secret.value
+  #admin_password      = "Password1234!"
   network_interface_ids = [
     azurerm_network_interface.secure_vm_nic.id
   ]
@@ -25,9 +26,9 @@ resource "azurerm_windows_virtual_machine" "secure_vm" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.secure_user_assigned-identity.id]
+    identity_ids = [azurerm_user_assigned_identity.secure_user_assigned_identity.id]
   }
- 
+  depends_on = [azurerm_subnet.secure_windows_vm_subnet]
 }
 
 
