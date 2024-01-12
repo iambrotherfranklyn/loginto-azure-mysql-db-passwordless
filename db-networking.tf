@@ -55,12 +55,14 @@ resource "azurerm_private_endpoint" "secure_db_endpoint" {
     name                 = "mysql-dns-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.mysql.id]
   }
+  depends_on = [azurerm_subnet.secure_db_subnet]
 }
 
 
 resource "azurerm_private_dns_zone" "mysql" {
   name                = "privatelink.mysql.database.azure.com"
   resource_group_name = azurerm_resource_group.secure_rg.name
+  depends_on          = [azurerm_resource_group.secure_rg]
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "mysql_link" {
@@ -68,7 +70,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "mysql_link" {
   resource_group_name   = azurerm_resource_group.secure_rg.name
   private_dns_zone_name = azurerm_private_dns_zone.mysql.name
   virtual_network_id    = azurerm_virtual_network.secure_vnet.id
-
+  depends_on            = [azurerm_private_endpoint.secure_db_endpoint]
 }
 
 /*

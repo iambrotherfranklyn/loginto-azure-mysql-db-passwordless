@@ -23,10 +23,24 @@ resource "azurerm_network_security_rule" "mysql_outbound_rule" {
   source_port_range           = "*"
   destination_port_range      = "3306" # Default MySQL port
   source_address_prefix       = "*"    # Applies to all sources in the subnet
-  destination_address_prefix  = azurerm_private_endpoint.mysql_private_endpoint.private_service_connection[0].private_ip_address
+  destination_address_prefix  = azurerm_private_endpoint.secure_db_endpoint.private_service_connection[0].private_ip_address
   resource_group_name         = azurerm_resource_group.secure_rg.name
   network_security_group_name = azurerm_network_security_group.secure_vm_nsg.name
   depends_on                  = [azurerm_network_security_group.secure_vm_nsg, azurerm_private_endpoint.mysql_private_endpoint]
+}
+
+resource "azurerm_network_security_rule" "secure_bastion_to_vm_rdp" {
+  name                        = "SecureBastionToVMRDP"
+  priority                    = 110
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "3389"               # RDP port
+  source_address_prefix       = "AzureBastionSubnet" # Allow traffic from Azure Bastion
+  destination_address_prefix  = "VirtualNetwork"
+  resource_group_name         = azurerm_resource_group.secure_rg.name
+  network_security_group_name = azurerm_network_security_group.secure_vm_nsg.name
 }
 
 

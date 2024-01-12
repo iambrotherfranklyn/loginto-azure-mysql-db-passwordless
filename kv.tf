@@ -22,6 +22,7 @@ resource "azurerm_key_vault" "secure_kv" {
     create = "30m"
     read   = "30m"
   }
+  depends_on = [azurerm_resource_group.secure_rg]
 }
 
 
@@ -41,7 +42,7 @@ resource "azurerm_key_vault_access_policy" "secure_db-kv_access_policy" {
 }
 
 #mine
-resource "azurerm_key_vault_access_policy" "secure_db-kv_access_policy_franklyn" {
+resource "azurerm_key_vault_access_policy" "secure_db_kv_access_policy_franklyn" {
   key_vault_id = azurerm_key_vault.secure_kv.id
 
   tenant_id = data.azurerm_client_config.secure_tenant_config.tenant_id

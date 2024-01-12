@@ -2,7 +2,8 @@ resource "azurerm_user_assigned_identity" "secure_user_assigned_identity" {
   resource_group_name = azurerm_resource_group.secure_rg.name
   location            = azurerm_resource_group.secure_rg.location
 
-  name = "secure-user-assinged-identity"
+  name       = "secure-user-assinged-identity"
+  depends_on = [azurerm_resource_group.secure_rg]
 }
 
 resource "azurerm_role_assignment" "secure_kv_role" {
@@ -13,7 +14,7 @@ resource "azurerm_role_assignment" "secure_kv_role" {
 }
 
 resource "azurerm_role_assignment" "secure_mysql_role" {
-  scope                = azurerm_mysql_flexible_server.secure_mysql-flexible-server.id
+  scope                = azurerm_mysql_flexible_server.secure_mysql_flexible_server.id
   role_definition_name = "Contributor"
   principal_id         = azurerm_user_assigned_identity.secure_user_assigned_identity.principal_id
   depends_on           = [azurerm_user_assigned_identity.secure_user_assigned_identity]
