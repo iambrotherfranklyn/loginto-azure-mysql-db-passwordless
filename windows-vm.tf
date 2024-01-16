@@ -31,4 +31,18 @@ resource "azurerm_windows_virtual_machine" "secure_vm" {
   depends_on = [azurerm_subnet.secure_windows_vm_subnet]
 }
 
+resource "azurerm_virtual_machine_extension" "installation_tool" {
+  name                 = "installationTool"
+  virtual_machine_id   = azurerm_windows_virtual_machine.secure_vm.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
 
+  settings = <<-SETTINGS
+  {
+    "commandToExecute": "powershell -ExecutionPolicy Unrestricted -Command \\\"Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/iambrotherfranklyn/housekeeping/main/tool-installations.ps1' -OutFile '\\$env:TEMP\\tool-installations.ps1'; & '\\$env:TEMP\\tool-installations.ps1'\\\""
+  }
+  SETTINGS
+
+  depends_on = [azurerm_windows_virtual_machine.secure_vm]
+}

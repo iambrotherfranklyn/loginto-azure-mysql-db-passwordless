@@ -1,7 +1,7 @@
 resource "random_password" "password_generator" {
   length           = 11
   lower            = true
-  numeric          = true
+  #numeric          = true
   special          = true
   upper            = true
   override_special = "!#%&"

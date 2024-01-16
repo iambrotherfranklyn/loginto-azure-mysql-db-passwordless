@@ -15,7 +15,7 @@ resource "azurerm_key_vault" "secure_kv" {
     default_action = "Deny"
     bypass         = "AzureServices"
     #bypass                     = "none"
-    ip_rules                   = ["92.7.185.142"]
+    ip_rules                   = ["your-public ip, so that  you are able to provision. Remove after provisioning"]
     virtual_network_subnet_ids = []
   }
   timeouts {
@@ -46,7 +46,7 @@ resource "azurerm_key_vault_access_policy" "secure_db_kv_access_policy_franklyn"
   key_vault_id = azurerm_key_vault.secure_kv.id
 
   tenant_id = data.azurerm_client_config.secure_tenant_config.tenant_id
-  object_id = "4eb31a59-f884-4a52-a7fe-3cd29615581b"
+  object_id = "object_id of your own account" #you are the admin  
 
   secret_permissions = [
     "Get",

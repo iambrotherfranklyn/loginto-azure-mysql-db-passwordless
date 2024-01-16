@@ -27,7 +27,7 @@ resource "azurerm_network_security_rule" "mysql_inbound_rule" {
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.secure_rg.name
   network_security_group_name = azurerm_network_security_group.secure_db_nsg.name
-  depends_on                  = [azurerm_network_security_group.secure_db_nsg, azurerm_private_endpoint.mysql_private_endpoint]
+  depends_on                  = [azurerm_network_security_group.secure_db_nsg, azurerm_private_endpoint.secure_db_endpoint]
 }
 
 
@@ -55,7 +55,7 @@ resource "azurerm_private_endpoint" "secure_db_endpoint" {
     name                 = "mysql-dns-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.mysql.id]
   }
-  depends_on = [azurerm_subnet.secure_db_subnet]
+  depends_on = [azurerm_private_dns_zone.mysql]
 }
 
 
@@ -70,7 +70,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "mysql_link" {
   resource_group_name   = azurerm_resource_group.secure_rg.name
   private_dns_zone_name = azurerm_private_dns_zone.mysql.name
   virtual_network_id    = azurerm_virtual_network.secure_vnet.id
-  depends_on            = [azurerm_private_endpoint.secure_db_endpoint]
+  depends_on            = [azurerm_private_dns_zone.mysql]
 }
 
 /*
